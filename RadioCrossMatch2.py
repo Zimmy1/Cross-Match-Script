@@ -28,9 +28,6 @@ for file in files:
         votable = v.parse(file)
         table = votable.get_first_table().to_table()
         
-        # Storing the SBID's for each observation because I couldn't figure out
-        # how to get the dates and after some research sbids seemed like
-        # the next best thing
         sbid_str = re.search(r"SB(\d+)", file)
         sbid = int(sbid_str.group(1))
         sbid_ary.append(sbid)
@@ -89,7 +86,7 @@ detect = ~uplim
 
 plt.errorbar(sorted_sbid[detect], y[detect], yerr=err[detect],fmt='o-', color='blue', label = 'detections')
 plt.errorbar(sorted_sbid[uplim], y[uplim], yerr=err[uplim], uplims=True,fmt='o', color='red', label ='uplims')
-plt.title(f'Light Curve of object at epoch 2 and target {tidx}')
+plt.title(f'Light Curve of object at epoch {tidx - 1} and target {tidx}')
 plt.xlabel('SBID')
 plt.ylabel('Flux (mJy)')
 plt.legend()
@@ -102,9 +99,9 @@ for _ in range(len(sorted_sbid)-1):
     de = np.sqrt(err[i]**2 + err[i-1]**2)
     sig = np.abs(df) / de
     
-    if sig > 2 and df > 0:
+    if sig > 5 and df > 0:
         print(f'Objects flux rose by {df} mJy from observation {sorted_sbid[i-1]} to {sorted_sbid[i]}')
-    elif sig > 2 and df < 0:
+    elif sig > 5 and df < 0:
         print(f'Objects flux decreased by {df} mJy from observation {sorted_sbid[i-1]} to {sorted_sbid[i]}')
     
     i += 1
